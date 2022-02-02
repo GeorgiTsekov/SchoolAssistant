@@ -1,0 +1,46 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <CodeAnalysisRuleSet>..\..\Rules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <AdditionalFiles Include="..\..\stylecop.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommandLineParser" Version="2.8.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="5.0.6" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.312" PrivateAssets="all">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\SchoolAssistant.Common\SchoolAssistant.Common.csproj" />
+    <ProjectReference Include="..\..\Data\SchoolAssistant.Data.Common\SchoolAssistant.Data.Common.csproj" />
+    <ProjectReference Include="..\..\Data\SchoolAssistant.Data.Models\SchoolAssistant.Data.Models.csproj" />
+    <ProjectReference Include="..\..\Data\SchoolAssistant.Data\SchoolAssistant.Data.csproj" />
+    <ProjectReference Include="..\..\Services\SchoolAssistant.Services.Data\SchoolAssistant.Services.Data.csproj" />
+    <ProjectReference Include="..\..\Services\SchoolAssistant.Services.Mapping\SchoolAssistant.Services.Mapping.csproj" />
+    <ProjectReference Include="..\..\Services\SchoolAssistant.Services.Messaging\SchoolAssistant.Services.Messaging.csproj" />
+    <ProjectReference Include="..\..\Services\SchoolAssistant.Services\SchoolAssistant.Services.csproj" />
+  </ItemGroup>
+
+</Project>
