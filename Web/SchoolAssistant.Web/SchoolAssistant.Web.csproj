@@ -36,4 +36,8 @@
     <ProjectReference Include="..\SchoolAssistant.Web.Infrastructure\SchoolAssistant.Web.Infrastructure.csproj" />
     <ProjectReference Include="..\SchoolAssistant.Web.ViewModels\SchoolAssistant.Web.ViewModels.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Areas\Administration\Views\Dashboard\" />
+  </ItemGroup>
 </Project>

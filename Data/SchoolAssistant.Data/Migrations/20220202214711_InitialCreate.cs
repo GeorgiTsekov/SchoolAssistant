@@ -56,13 +56,12 @@
                 });
 
             migrationBuilder.CreateTable(
-                name: "Settings",
+                name: "Department",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Value = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
@@ -70,7 +69,7 @@
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Settings", x => x.Id);
+                    table.PrimaryKey("PK_Department", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -179,6 +178,154 @@
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Courses",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DepartmentId = table.Column<int>(type: "int", nullable: false),
+                    CreatedByUserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Courses", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Courses_AspNetUsers_CreatedByUserId",
+                        column: x => x.CreatedByUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Courses_Department_DepartmentId",
+                        column: x => x.DepartmentId,
+                        principalTable: "Department",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CourseStudents",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CourseId = table.Column<int>(type: "int", nullable: false),
+                    StudentId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CourseStudents", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CourseStudents_AspNetUsers_StudentId",
+                        column: x => x.StudentId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_CourseStudents_Courses_CourseId",
+                        column: x => x.CourseId,
+                        principalTable: "Courses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CourseTeachers",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CourseId = table.Column<int>(type: "int", nullable: false),
+                    TeacherId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CourseTeachers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CourseTeachers_AspNetUsers_TeacherId",
+                        column: x => x.TeacherId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_CourseTeachers_Courses_CourseId",
+                        column: x => x.CourseId,
+                        principalTable: "Courses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Lectures",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    VideoUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CourseId = table.Column<int>(type: "int", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Lectures", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Lectures_Courses_CourseId",
+                        column: x => x.CourseId,
+                        principalTable: "Courses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Presentation",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    LectureId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LectureId1 = table.Column<int>(type: "int", nullable: true),
+                    CreatedByUserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    Extension = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Presentation", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Presentation_AspNetUsers_CreatedByUserId",
+                        column: x => x.CreatedByUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Presentation_Lectures_LectureId1",
+                        column: x => x.LectureId1,
+                        principalTable: "Lectures",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -229,9 +376,79 @@
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Settings_IsDeleted",
-                table: "Settings",
+                name: "IX_Courses_CreatedByUserId",
+                table: "Courses",
+                column: "CreatedByUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Courses_DepartmentId",
+                table: "Courses",
+                column: "DepartmentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Courses_IsDeleted",
+                table: "Courses",
                 column: "IsDeleted");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CourseStudents_CourseId",
+                table: "CourseStudents",
+                column: "CourseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CourseStudents_IsDeleted",
+                table: "CourseStudents",
+                column: "IsDeleted");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CourseStudents_StudentId",
+                table: "CourseStudents",
+                column: "StudentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CourseTeachers_CourseId",
+                table: "CourseTeachers",
+                column: "CourseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CourseTeachers_IsDeleted",
+                table: "CourseTeachers",
+                column: "IsDeleted");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CourseTeachers_TeacherId",
+                table: "CourseTeachers",
+                column: "TeacherId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Department_IsDeleted",
+                table: "Department",
+                column: "IsDeleted");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Lectures_CourseId",
+                table: "Lectures",
+                column: "CourseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Lectures_IsDeleted",
+                table: "Lectures",
+                column: "IsDeleted");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Presentation_CreatedByUserId",
+                table: "Presentation",
+                column: "CreatedByUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Presentation_IsDeleted",
+                table: "Presentation",
+                column: "IsDeleted");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Presentation_LectureId1",
+                table: "Presentation",
+                column: "LectureId1");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -252,13 +469,28 @@
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Settings");
+                name: "CourseStudents");
+
+            migrationBuilder.DropTable(
+                name: "CourseTeachers");
+
+            migrationBuilder.DropTable(
+                name: "Presentation");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
+                name: "Lectures");
+
+            migrationBuilder.DropTable(
+                name: "Courses");
+
+            migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Department");
         }
     }
 }

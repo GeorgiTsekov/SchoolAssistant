@@ -23,7 +23,17 @@
         {
         }
 
-        public DbSet<Setting> Settings { get; set; }
+        public DbSet<Course> Courses { get; set; }
+
+        public DbSet<Department> Department { get; set; }
+
+        public DbSet<Lecture> Lectures { get; set; }
+
+        public DbSet<Presentation> Presentation { get; set; }
+
+        public DbSet<CourseStudent> CourseStudents { get; set; }
+
+        public DbSet<CourseTeacher> CourseTeachers { get; set; }
 
         public override int SaveChanges() => this.SaveChanges(true);
 
