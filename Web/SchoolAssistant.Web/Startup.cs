@@ -16,6 +16,7 @@
     using SchoolAssistant.Data.Models;
     using SchoolAssistant.Data.Repositories;
     using SchoolAssistant.Data.Seeding;
+    using SchoolAssistant.Services.Data;
     using SchoolAssistant.Services.Mapping;
     using SchoolAssistant.Services.Messaging;
     using SchoolAssistant.Web.ViewModels;
@@ -59,6 +60,10 @@
             services.AddScoped(typeof(IDeletableEntityRepository<>), typeof(EfDeletableEntityRepository<>));
             services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
             services.AddScoped<IDbQueryRunner, DbQueryRunner>();
+
+            services.AddTransient<IGetCountsService, GetCountsService>();
+            services.AddTransient<IDepartmentsService, DepartmentsService>();
+            services.AddTransient<ICoursesService, CoursesService>();
 
             // Application services
             services.AddTransient<IEmailSender, NullMessageSender>();

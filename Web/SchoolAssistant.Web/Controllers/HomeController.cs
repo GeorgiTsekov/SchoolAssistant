@@ -1,32 +1,23 @@
 ﻿namespace SchoolAssistant.Web.Controllers
 {
     using System.Diagnostics;
-    using System.Linq;
 
     using Microsoft.AspNetCore.Mvc;
-    using SchoolAssistant.Data;
+    using SchoolAssistant.Services.Data;
     using SchoolAssistant.Web.ViewModels;
-    using SchoolAssistant.Web.ViewModels.Home;
 
     public class HomeController : BaseController
     {
-        private readonly ApplicationDbContext db;
+        private readonly IGetCountsService getCountsService;
 
-        public HomeController(ApplicationDbContext db)
+        public HomeController(IGetCountsService getCountsService)
         {
-            this.db = db;
+            this.getCountsService = getCountsService;
         }
 
         public IActionResult Index()
         {
-            var viewModel = new IndexViewModel
-            {
-                CoursesCount = this.db.Courses.Count(),
-                TeachersCount = 0,
-                DepartmentsCount = this.db.Department.Count(),
-                StudentsCount = 0,
-            };
-
+            var viewModel = this.getCountsService.GetCounts();
             return this.View(viewModel);
         }
 

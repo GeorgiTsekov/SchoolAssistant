@@ -1,0 +1,26 @@
+﻿@model SchoolAssistant.Web.ViewModels.Courses.CreateCourseInputModel
+@{ 
+    this.ViewData["Title"] = "Add new Course";
+    var departmentItems = this.Model.DepartmentsItems.Select(x => new SelectListItem(x.Value, x.Key));
+}
+
+<form method="post" class="col-md-6 offset-md-3">
+    <h1>@ViewData["Title"]</h1>
+    <div asp-validation-summary="All"></div>
+    <div class="form-group">
+        <label asp-for="Name"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Description"></label>
+        <textarea asp-for="Description" class="form-control" rows="5"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="DepartmentId"></label>
+        <select asp-for="DepartmentId" class=" form-control" asp-items="departmentItems"></select>
+        <span asp-validation-for="DepartmentId" class="text-danger"></span>
+    </div>
+    <input type="submit" class="btn btn-primary" />
+</form>

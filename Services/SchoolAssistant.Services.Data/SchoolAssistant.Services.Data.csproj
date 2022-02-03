@@ -21,6 +21,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Data\SchoolAssistant.Data.Common\SchoolAssistant.Data.Common.csproj" />
     <ProjectReference Include="..\..\Data\SchoolAssistant.Data.Models\SchoolAssistant.Data.Models.csproj" />
+    <ProjectReference Include="..\..\Web\SchoolAssistant.Web.ViewModels\SchoolAssistant.Web.ViewModels.csproj" />
     <ProjectReference Include="..\SchoolAssistant.Services.Mapping\SchoolAssistant.Services.Mapping.csproj" />
   </ItemGroup>
 
