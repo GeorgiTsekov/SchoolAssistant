@@ -16,8 +16,6 @@ namespace SchoolAssistant.Data.Models
             this.Claims = new HashSet<IdentityUserClaim<string>>();
             this.Logins = new HashSet<IdentityUserLogin<string>>();
             this.Courses = new HashSet<Course>();
-            this.Teachers = new HashSet<CourseTeacher>();
-            this.Students = new HashSet<CourseStudent>();
         }
 
         // Audit info
@@ -37,9 +35,5 @@ namespace SchoolAssistant.Data.Models
         public virtual ICollection<IdentityUserLogin<string>> Logins { get; set; }
 
         public virtual ICollection<Course> Courses { get; set; }
-
-        public virtual ICollection<CourseTeacher> Teachers { get; set; }
-
-        public virtual ICollection<CourseStudent> Students { get; set; }
     }
 }

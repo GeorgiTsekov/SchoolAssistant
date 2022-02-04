@@ -51,5 +51,10 @@
 
             return courses;
         }
+
+        public int GetCount()
+        {
+            return this.courseRepository.All().Count();
+        }
     }
 }

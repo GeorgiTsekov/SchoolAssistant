@@ -31,10 +31,6 @@
 
         public DbSet<Presentation> Presentation { get; set; }
 
-        public DbSet<CourseStudent> CourseStudents { get; set; }
-
-        public DbSet<CourseTeacher> CourseTeachers { get; set; }
-
         public override int SaveChanges() => this.SaveChanges(true);
 
         public override int SaveChanges(bool acceptAllChangesOnSuccess)

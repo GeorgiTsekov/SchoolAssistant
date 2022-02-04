@@ -9,8 +9,6 @@
         public Course()
         {
             this.Lectures = new HashSet<Lecture>();
-            this.Teachers = new HashSet<CourseTeacher>();
-            this.Students = new HashSet<CourseStudent>();
         }
 
         public string Name { get; set; }
@@ -26,9 +24,5 @@
         public virtual ApplicationUser CreatedByUser { get; set; }
 
         public virtual ICollection<Lecture> Lectures { get; set; }
-
-        public virtual ICollection<CourseTeacher> Teachers { get; set; }
-
-        public virtual ICollection<CourseStudent> Students { get; set; }
     }
 }

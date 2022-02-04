@@ -56,9 +56,12 @@
 
         public IActionResult All(int id = 1)
         {
+            const int ItemsPerPage = 12;
             var viewModel = new CoursesListViewModel
             {
+                ItemsPerPage = ItemsPerPage,
                 PageNumber = id,
+                CoursesCount = this.coursesService.GetCount(),
                 Courses = this.coursesService.GetAll(id, 12),
             };
 

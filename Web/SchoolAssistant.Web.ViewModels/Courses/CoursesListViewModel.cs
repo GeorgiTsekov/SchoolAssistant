@@ -2,10 +2,8 @@
 {
     using System.Collections.Generic;
 
-    public class CoursesListViewModel
+    public class CoursesListViewModel : PagingViewModel
     {
         public IEnumerable<CourseInListViewModel> Courses { get; set; }
-
-        public int PageNumber { get; set; }
     }
 }
