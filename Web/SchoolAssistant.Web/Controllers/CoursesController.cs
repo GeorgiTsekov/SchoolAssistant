@@ -2,7 +2,10 @@
 {
     using System.Threading.Tasks;
 
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
+    using SchoolAssistant.Data.Models;
     using SchoolAssistant.Services.Data;
     using SchoolAssistant.Web.ViewModels.Courses;
 
@@ -10,15 +13,19 @@
     {
         private readonly IDepartmentsService departmentsService;
         private readonly ICoursesService coursesService;
+        private readonly UserManager<ApplicationUser> userManager;
 
         public CoursesController(
             IDepartmentsService departmentsService,
-            ICoursesService coursesService)
+            ICoursesService coursesService,
+            UserManager<ApplicationUser> userManager)
         {
             this.departmentsService = departmentsService;
             this.coursesService = coursesService;
+            this.userManager = userManager;
         }
 
+        [Authorize]
         public IActionResult Create()
         {
             var viewModel = new CreateCourseInputModel
@@ -28,6 +35,7 @@
             return this.View(viewModel);
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Create(CreateCourseInputModel input)
         {
@@ -37,10 +45,24 @@
                 return this.View(input);
             }
 
-            await this.coursesService.CreateAsync(input);
+            //// var userId = this.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            var user = await this.userManager.GetUserAsync(this.User);
+            await this.coursesService.CreateAsync(input, user.Id);
 
             // Redirect to course info page
             return this.Redirect("/");
+        }
+
+        public IActionResult All(int id = 1)
+        {
+            var viewModel = new CoursesListViewModel
+            {
+                PageNumber = id,
+                Courses = this.coursesService.GetAll(id, 12),
+            };
+
+            return this.View(viewModel);
         }
     }
 }
