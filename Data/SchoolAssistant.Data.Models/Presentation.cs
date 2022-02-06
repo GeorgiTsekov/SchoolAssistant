@@ -15,6 +15,8 @@
 
         public virtual Lecture Lecture { get; set; }
 
+        public string RemotePresentationUrl { get; set; }
+
         public string CreatedByUserId { get; set; }
 
         public ApplicationUser CreatedByUser { get; set; }

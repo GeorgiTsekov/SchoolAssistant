@@ -1,0 +1,31 @@
+﻿@model SchoolAssistant.Web.ViewModels.Courses.SingleCourseViewModel
+@{
+    this.ViewData["Title"] = Model.Name;
+}
+<h1>@this.ViewData["Title"]</h1>
+<hr />
+<div>
+    <div class="card-body">
+        <h6>Department: @Model.DepartmentName</h6>
+        <h6>Created By: @Model.CreatedByUserUserName</h6>
+        <h6>Created On: @Model.CreatedOn.ToShortDateString()</h6>
+    </div>
+</div>
+@foreach (var lecture in Model.Lectures)
+{
+    <div class="card text-center col-md-6">
+        <div class="card-header">
+            @lecture.Name
+        </div>
+        <div class="card-body">
+            <h5 class="card-title"> @lecture.PresentationUrl</h5>
+            <p class="card-text"> @lecture.VideoUrl</p>
+            <a href="#" class="btn btn-primary">Go somewhere</a>
+        </div>
+        <div class="card-footer text-muted">
+            2 days ago
+        </div>
+    </div>
+}
+<hr />
+<p class="card-text">@Model.Description</p>

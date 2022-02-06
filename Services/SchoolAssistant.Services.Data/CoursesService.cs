@@ -8,6 +8,7 @@
 
     using SchoolAssistant.Data.Common.Repositories;
     using SchoolAssistant.Data.Models;
+    using SchoolAssistant.Services.Mapping;
     using SchoolAssistant.Web.ViewModels.Courses;
 
     public class CoursesService : ICoursesService
@@ -85,6 +86,16 @@
                 .ToList();
 
             return courses;
+        }
+
+        public T GetById<T>(int id)
+        {
+            var course = this.courseRepository.AllAsNoTracking()
+                .Where(x => x.Id == id)
+                .To<T>()
+                .FirstOrDefault();
+
+            return course;
         }
 
         public int GetCount()

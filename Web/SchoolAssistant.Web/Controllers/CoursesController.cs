@@ -80,9 +80,10 @@
             return this.View(viewModel);
         }
 
-        public IActionResult ById()
+        public IActionResult ById(int id)
         {
-            return this.View();
+            var course = this.coursesService.GetById<SingleCourseViewModel>(id);
+            return this.View(course);
         }
     }
 }
