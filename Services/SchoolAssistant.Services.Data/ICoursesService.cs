@@ -7,7 +7,7 @@
 
     public interface ICoursesService
     {
-        Task CreateAsync(CreateCourseInputModel input, string userId);
+        Task CreateAsync(CreateCourseInputModel input, string userId, string presentationPath);
 
         IEnumerable<CourseInListViewModel> GetAll(int page, int itemsPerPage = 12);
 

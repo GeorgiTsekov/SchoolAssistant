@@ -3,7 +3,7 @@
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
 
-    using SchoolAssistant.Web.ViewModels.Courses;
+    using Microsoft.AspNetCore.Http;
 
     public class CourseLectureInputModel
     {
@@ -15,8 +15,6 @@
         [Url]
         public string VideoUrl { get; set; }
 
-        public int CourseId { get; set; }
-
-        public ICollection<CourseLecturePresentationInputModel> Presentations { get; set; }
+        public IEnumerable<IFormFile> Presentations { get; set; }
     }
 }

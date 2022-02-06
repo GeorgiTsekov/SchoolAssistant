@@ -1,8 +1,10 @@
 ﻿namespace SchoolAssistant.Web.Controllers
 {
+    using System;
     using System.Threading.Tasks;
 
     using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using SchoolAssistant.Data.Models;
@@ -14,15 +16,18 @@
         private readonly IDepartmentsService departmentsService;
         private readonly ICoursesService coursesService;
         private readonly UserManager<ApplicationUser> userManager;
+        private readonly IWebHostEnvironment environment;
 
         public CoursesController(
             IDepartmentsService departmentsService,
             ICoursesService coursesService,
-            UserManager<ApplicationUser> userManager)
+            UserManager<ApplicationUser> userManager,
+            IWebHostEnvironment environment)
         {
             this.departmentsService = departmentsService;
             this.coursesService = coursesService;
             this.userManager = userManager;
+            this.environment = environment;
         }
 
         [Authorize]
@@ -48,7 +53,14 @@
             //// var userId = this.User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
             var user = await this.userManager.GetUserAsync(this.User);
-            await this.coursesService.CreateAsync(input, user.Id);
+            try
+            {
+                await this.coursesService.CreateAsync(input, user.Id, $"{this.environment.WebRootPath}/presentations");
+            }
+            catch (Exception ex)
+            {
+                this.ModelState.AddModelError(string.Empty, ex.Message);
+            }
 
             // Redirect to course info page
             return this.Redirect("/");
@@ -66,6 +78,11 @@
             };
 
             return this.View(viewModel);
+        }
+
+        public IActionResult ById()
+        {
+            return this.View();
         }
     }
 }

@@ -13,7 +13,7 @@
 
         public string LectureId { get; set; }
 
-        public Lecture Lecture { get; set; }
+        public virtual Lecture Lecture { get; set; }
 
         public string CreatedByUserId { get; set; }
 

@@ -1,6 +1,8 @@
 ﻿namespace SchoolAssistant.Services.Data
 {
+    using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
 
@@ -11,14 +13,14 @@
     public class CoursesService : ICoursesService
     {
         private readonly IDeletableEntityRepository<Course> courseRepository;
+        private readonly string[] allowedExtensions = new[] { "jpg", "png", "gif", "pdf", "txt", "docx", "pptx" };
 
-        public CoursesService(
-            IDeletableEntityRepository<Course> courseRepository)
+        public CoursesService(IDeletableEntityRepository<Course> courseRepository)
         {
             this.courseRepository = courseRepository;
         }
 
-        public async Task CreateAsync(CreateCourseInputModel input, string userId)
+        public async Task CreateAsync(CreateCourseInputModel input, string userId, string presentationPath)
         {
             var course = new Course
             {
@@ -27,6 +29,39 @@
                 DepartmentId = input.DepartmentId,
                 CreatedByUserId = userId,
             };
+
+            foreach (var lectureInput in input.Lectures)
+            {
+                var lecture = new Lecture
+                {
+                    Name = lectureInput.Name,
+                    VideoUrl = lectureInput.VideoUrl,
+                };
+
+                Directory.CreateDirectory($"{presentationPath}/lectures/courses/");
+                foreach (var presentationInput in lectureInput.Presentations)
+                {
+                    var extension = Path.GetExtension(presentationInput.FileName).TrimStart('.');
+
+                    if (!this.allowedExtensions.Any(x => extension.EndsWith(x)))
+                    {
+                        throw new Exception($"Invalid image extension {extension}");
+                    }
+
+                    var dbPresentation = new Presentation
+                    {
+                        CreatedByUserId = userId,
+                        Extension = extension,
+                    };
+
+                    lecture.Presentations.Add(dbPresentation);
+                    var physicalPath = $"{presentationPath}/lectures/courses/{dbPresentation.Id}.{extension}";
+                    using Stream fileStream = new FileStream(physicalPath, FileMode.Create);
+                    await presentationInput.CopyToAsync(fileStream);
+                }
+
+                course.Lectures.Add(lecture);
+            }
 
             await this.courseRepository.AddAsync(course);
             await this.courseRepository.SaveChangesAsync();
@@ -45,7 +80,7 @@
                     DepartmentName = x.Department.Name,
                     DepartmentId = x.DepartmentId,
                     Description = x.Description,
-                    CreatedByUserName = x.CreatedByUser.UserName,
+                    CreatedByUserUserName = x.CreatedByUser.UserName,
                 })
                 .ToList();
 

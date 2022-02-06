@@ -1,8 +1,8 @@
 ﻿namespace SchoolAssistant.Web.ViewModels.Courses
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
+    using AutoMapper;
+    using SchoolAssistant.Data.Models;
+    using SchoolAssistant.Services.Mapping;
 
     public class CourseInListViewModel
     {
@@ -16,6 +16,6 @@
 
         public string Description { get; set; }
 
-        public string CreatedByUserName { get; set; }
+        public string CreatedByUserUserName { get; set; }
     }
 }

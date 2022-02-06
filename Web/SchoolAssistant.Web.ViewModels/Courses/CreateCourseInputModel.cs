@@ -3,6 +3,8 @@
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
 
+    using SchoolAssistant.Web.Views.Courses;
+
     public class CreateCourseInputModel
     {
         [Required]
@@ -16,5 +18,7 @@
         public int DepartmentId { get; set; }
 
         public virtual IEnumerable<KeyValuePair<string, string>> DepartmentsItems { get; set; }
+
+        public IEnumerable<CourseLectureInputModel> Lectures { get; set; }
     }
 }
