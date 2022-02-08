@@ -21,9 +21,7 @@
             configuration.CreateMap<Lecture, SingleLectureViewModel>()
                 .ForMember(x => x.PresentationUrl, opt =>
                     opt.MapFrom(x =>
-                        x.Presentations.FirstOrDefault().RemotePresentationUrl != null ?
-                        x.Presentations.FirstOrDefault().RemotePresentationUrl :
-                        "/presentations/lectures/courses/" + x.Presentations.FirstOrDefault().Id + "." + x.Presentations.FirstOrDefault().Extension));
+                        x.Presentations.FirstOrDefault().RemotePresentationUrl ?? "/presentations/lectures/courses/" + x.Presentations.FirstOrDefault().Id + "." + x.Presentations.FirstOrDefault().Extension));
         }
     }
 }

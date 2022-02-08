@@ -64,6 +64,7 @@
             services.AddTransient<IGetCountsService, GetCountsService>();
             services.AddTransient<IDepartmentsService, DepartmentsService>();
             services.AddTransient<ICoursesService, CoursesService>();
+            services.AddTransient<IVotesService, VotesService>();
 
             // Application services
             services.AddTransient<IEmailSender, NullMessageSender>();

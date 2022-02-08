@@ -11,7 +11,7 @@
     using SchoolAssistant.Services.Data;
     using SchoolAssistant.Web.ViewModels.Courses;
 
-    public class CoursesController : Controller
+    public class CoursesController : BaseController
     {
         private readonly IDepartmentsService departmentsService;
         private readonly ICoursesService coursesService;
