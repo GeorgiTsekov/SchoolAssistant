@@ -1,0 +1,12 @@
+﻿@model SchoolAssistant.Web.ViewModels.Courses.SingleLectureViewModel
+@{
+    this.ViewData["Title"] = Model.Name;
+}
+<h1>@this.ViewData["Title"]</h1>
+<div class="youtube">
+    <iframe src="@Model.VideoUrl" frameborder="0" alt="..." width='1100' height='550' allowfullscreen webkitallowfullscreen></iframe>
+</div>
+<hr />
+<div>
+    <iframe src="@Model.PresentationUrl" width='1100' height='550' allowfullscreen webkitallowfullscreen></iframe>
+</div>

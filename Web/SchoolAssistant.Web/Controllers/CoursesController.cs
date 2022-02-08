@@ -85,5 +85,11 @@
             var course = this.coursesService.GetById<SingleCourseViewModel>(id);
             return this.View(course);
         }
+
+        public IActionResult LecturesById(int id)
+        {
+            var lecture = this.coursesService.GetLectureById<SingleLectureViewModel>(id);
+            return this.View(lecture);
+        }
     }
 }

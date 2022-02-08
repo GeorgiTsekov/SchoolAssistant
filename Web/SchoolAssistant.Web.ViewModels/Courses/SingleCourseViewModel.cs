@@ -20,6 +20,6 @@
 
         public DateTime CreatedOn { get; set; }
 
-        public IEnumerable<LecturesViewModel> Lectures { get; set; }
+        public IEnumerable<SingleLectureViewModel> Lectures { get; set; }
     }
 }

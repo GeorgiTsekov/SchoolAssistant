@@ -6,8 +6,10 @@
     using SchoolAssistant.Data.Models;
     using SchoolAssistant.Services.Mapping;
 
-    public class LecturesViewModel : IMapFrom<Lecture>, IHaveCustomMappings
+    public class SingleLectureViewModel : IMapFrom<Lecture>, IHaveCustomMappings
     {
+        public int Id { get; set; }
+
         public string Name { get; set; }
 
         public string VideoUrl { get; set; }
@@ -16,7 +18,7 @@
 
         public void CreateMappings(IProfileExpression configuration)
         {
-            configuration.CreateMap<Lecture, LecturesViewModel>()
+            configuration.CreateMap<Lecture, SingleLectureViewModel>()
                 .ForMember(x => x.PresentationUrl, opt =>
                     opt.MapFrom(x =>
                         x.Presentations.FirstOrDefault().RemotePresentationUrl != null ?

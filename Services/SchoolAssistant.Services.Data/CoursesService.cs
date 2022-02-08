@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Text;
     using System.Threading.Tasks;
 
     using SchoolAssistant.Data.Common.Repositories;
@@ -14,11 +15,15 @@
     public class CoursesService : ICoursesService
     {
         private readonly IDeletableEntityRepository<Course> courseRepository;
+        private readonly IDeletableEntityRepository<Lecture> lectureRepository;
         private readonly string[] allowedExtensions = new[] { "jpg", "png", "gif", "pdf", "txt", "docx", "pptx" };
 
-        public CoursesService(IDeletableEntityRepository<Course> courseRepository)
+        public CoursesService(
+            IDeletableEntityRepository<Course> courseRepository,
+            IDeletableEntityRepository<Lecture> lectureRepository)
         {
             this.courseRepository = courseRepository;
+            this.lectureRepository = lectureRepository;
         }
 
         public async Task CreateAsync(CreateCourseInputModel input, string userId, string presentationPath)
@@ -33,10 +38,13 @@
 
             foreach (var lectureInput in input.Lectures)
             {
+                var videoInput = lectureInput.VideoUrl;
+                string youtubeVideo = MakeYoutubeVideoWorkForMyApp(videoInput);
+
                 var lecture = new Lecture
                 {
                     Name = lectureInput.Name,
-                    VideoUrl = lectureInput.VideoUrl,
+                    VideoUrl = youtubeVideo.ToString().TrimEnd(),
                 };
 
                 Directory.CreateDirectory($"{presentationPath}/lectures/courses/");
@@ -98,9 +106,30 @@
             return course;
         }
 
+        public T GetLectureById<T>(int id)
+        {
+            var lecture = this.lectureRepository.AllAsNoTracking()
+                .Where(x => x.Id == id)
+                .To<T>()
+                .FirstOrDefault();
+
+            return lecture;
+        }
+
         public int GetCount()
         {
             return this.courseRepository.All().Count();
+        }
+
+        private static string MakeYoutubeVideoWorkForMyApp(string videoInput)
+        {
+            var sb = new StringBuilder();
+            sb.Append("https://www.youtube.com/embed/");
+            var splitedVideoUrl = videoInput.Split("watch?v=");
+            sb.Append(splitedVideoUrl[1]);
+            sb.Append("?autoplay=0");
+            var youtubeVideo = sb.ToString().TrimEnd();
+            return youtubeVideo;
         }
     }
 }

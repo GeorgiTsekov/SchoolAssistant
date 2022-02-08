@@ -11,21 +11,17 @@
         <h6>Created On: @Model.CreatedOn.ToShortDateString()</h6>
     </div>
 </div>
-@foreach (var lecture in Model.Lectures)
-{
-    <div class="card text-center col-md-6">
-        <div class="card-header">
-            @lecture.Name
+<div class="row">
+    @foreach (var lecture in Model.Lectures)
+    {
+        <div class="card text-center col-md-6">
+            <div class="card-header">
+                @lecture.Name
+                @lecture.Id
+            </div>
+            <a asp-action="LecturesById" asp-route-id="@lecture.Id" class="card-link">Go To Lecture</a>
         </div>
-        <div class="card-body">
-            <h5 class="card-title"> @lecture.PresentationUrl</h5>
-            <p class="card-text"> @lecture.VideoUrl</p>
-            <a href="#" class="btn btn-primary">Go somewhere</a>
-        </div>
-        <div class="card-footer text-muted">
-            2 days ago
-        </div>
-    </div>
-}
+    }
+</div>
 <hr />
 <p class="card-text">@Model.Description</p>
