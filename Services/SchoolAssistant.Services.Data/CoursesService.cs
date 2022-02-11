@@ -125,7 +125,7 @@
         {
             var sb = new StringBuilder();
             sb.Append("https://www.youtube.com/embed/");
-            var splitedVideoUrl = videoInput.Split("watch?v=");
+            var splitedVideoUrl = videoInput.Split("=");
             sb.Append(splitedVideoUrl[1]);
             sb.Append("?autoplay=0");
             var youtubeVideo = sb.ToString().TrimEnd();
