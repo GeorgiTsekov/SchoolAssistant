@@ -74,7 +74,7 @@
                 ItemsPerPage = ItemsPerPage,
                 PageNumber = id,
                 CoursesCount = this.coursesService.GetCount(),
-                Courses = this.coursesService.GetAll(id, 12),
+                Courses = this.coursesService.GetAll<CourseInListViewModel>(id, 12),
             };
 
             return this.View(viewModel);

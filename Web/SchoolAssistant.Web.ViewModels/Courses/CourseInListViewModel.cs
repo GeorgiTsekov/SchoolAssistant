@@ -1,10 +1,9 @@
 ﻿namespace SchoolAssistant.Web.ViewModels.Courses
 {
-    using AutoMapper;
     using SchoolAssistant.Data.Models;
     using SchoolAssistant.Services.Mapping;
 
-    public class CourseInListViewModel
+    public class CourseInListViewModel : IMapFrom<Course>
     {
         public int Id { get; set; }
 

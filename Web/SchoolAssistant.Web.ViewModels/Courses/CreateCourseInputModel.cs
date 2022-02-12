@@ -3,9 +3,11 @@
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
 
+    using SchoolAssistant.Data.Models;
+    using SchoolAssistant.Services.Mapping;
     using SchoolAssistant.Web.Views.Courses;
 
-    public class CreateCourseInputModel
+    public class CreateCourseInputModel : IMapFrom<Course>
     {
         [Required]
         [MinLength(3)]

@@ -4,8 +4,10 @@
     using System.ComponentModel.DataAnnotations;
 
     using Microsoft.AspNetCore.Http;
+    using SchoolAssistant.Data.Models;
+    using SchoolAssistant.Services.Mapping;
 
-    public class CourseLectureInputModel
+    public class CourseLectureInputModel : IMapFrom<Lecture>
     {
         [Required]
         [MinLength(3)]

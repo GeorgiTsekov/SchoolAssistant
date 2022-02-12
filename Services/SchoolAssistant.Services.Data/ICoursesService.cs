@@ -9,7 +9,7 @@
     {
         Task CreateAsync(CreateCourseInputModel input, string userId, string presentationPath);
 
-        IEnumerable<CourseInListViewModel> GetAll(int page, int itemsPerPage = 12);
+        IEnumerable<T> GetAll<T>(int page, int itemsPerPage = 12);
 
         int GetCount();
 

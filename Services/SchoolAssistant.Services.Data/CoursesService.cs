@@ -76,21 +76,13 @@
             await this.courseRepository.SaveChangesAsync();
         }
 
-        public IEnumerable<CourseInListViewModel> GetAll(int page, int itemsPerPage = 12)
+        public IEnumerable<T> GetAll<T>(int page, int itemsPerPage = 12)
         {
             var courses = this.courseRepository.AllAsNoTracking()
                 .OrderByDescending(x => x.Id)
                 .Skip((page - 1) * itemsPerPage)
                 .Take(itemsPerPage)
-                .Select(x => new CourseInListViewModel
-                {
-                    Id = x.Id,
-                    Name = x.Name,
-                    DepartmentName = x.Department.Name,
-                    DepartmentId = x.DepartmentId,
-                    Description = x.Description,
-                    CreatedByUserUserName = x.CreatedByUser.UserName,
-                })
+                .To<T>()
                 .ToList();
 
             return courses;
@@ -98,7 +90,7 @@
 
         public T GetById<T>(int id)
         {
-            var course = this.courseRepository.AllAsNoTracking()
+            var course = this.courseRepository.All()
                 .Where(x => x.Id == id)
                 .To<T>()
                 .FirstOrDefault();
