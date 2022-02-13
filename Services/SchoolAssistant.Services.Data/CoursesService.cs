@@ -7,23 +7,19 @@
     using System.Text;
     using System.Threading.Tasks;
 
-    using SchoolAssistant.Data.Common.Repositories;
+    using SchoolAssistant.Data;
     using SchoolAssistant.Data.Models;
     using SchoolAssistant.Services.Mapping;
     using SchoolAssistant.Web.ViewModels.Courses;
 
     public class CoursesService : ICoursesService
     {
-        private readonly IDeletableEntityRepository<Course> courseRepository;
-        private readonly IDeletableEntityRepository<Lecture> lectureRepository;
         private readonly string[] allowedExtensions = new[] { "jpg", "png", "gif", "pdf", "txt", "docx", "pptx" };
+        private readonly ApplicationDbContext applicationDbContext;
 
-        public CoursesService(
-            IDeletableEntityRepository<Course> courseRepository,
-            IDeletableEntityRepository<Lecture> lectureRepository)
+        public CoursesService(ApplicationDbContext applicationDbContext)
         {
-            this.courseRepository = courseRepository;
-            this.lectureRepository = lectureRepository;
+            this.applicationDbContext = applicationDbContext;
         }
 
         public async Task CreateAsync(CreateCourseInputModel input, string userId, string presentationPath)
@@ -72,13 +68,13 @@
                 course.Lectures.Add(lecture);
             }
 
-            await this.courseRepository.AddAsync(course);
-            await this.courseRepository.SaveChangesAsync();
+            await this.applicationDbContext.Courses.AddAsync(course);
+            await this.applicationDbContext.SaveChangesAsync();
         }
 
         public IEnumerable<T> GetAll<T>(int page, int itemsPerPage = 12)
         {
-            var courses = this.courseRepository.AllAsNoTracking()
+            var courses = this.applicationDbContext.Courses
                 .OrderByDescending(x => x.Id)
                 .Skip((page - 1) * itemsPerPage)
                 .Take(itemsPerPage)
@@ -90,7 +86,7 @@
 
         public T GetById<T>(int id)
         {
-            var course = this.courseRepository.All()
+            var course = this.applicationDbContext.Courses
                 .Where(x => x.Id == id)
                 .To<T>()
                 .FirstOrDefault();
@@ -100,7 +96,7 @@
 
         public T GetLectureById<T>(int id)
         {
-            var lecture = this.lectureRepository.AllAsNoTracking()
+            var lecture = this.applicationDbContext.Lectures
                 .Where(x => x.Id == id)
                 .To<T>()
                 .FirstOrDefault();
@@ -110,7 +106,7 @@
 
         public int GetCount()
         {
-            return this.courseRepository.All().Count();
+            return this.applicationDbContext.Courses.Count();
         }
 
         private static string MakeYoutubeVideoWorkForMyApp(string videoInput)

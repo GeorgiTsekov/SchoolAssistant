@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
@@ -22,6 +22,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Data\SchoolAssistant.Data.Common\SchoolAssistant.Data.Common.csproj" />
     <ProjectReference Include="..\..\Data\SchoolAssistant.Data.Models\SchoolAssistant.Data.Models.csproj" />
+    <ProjectReference Include="..\..\Data\SchoolAssistant.Data\SchoolAssistant.Data.csproj" />
     <ProjectReference Include="..\..\Web\SchoolAssistant.Web.ViewModels\SchoolAssistant.Web.ViewModels.csproj" />
     <ProjectReference Include="..\SchoolAssistant.Services.Mapping\SchoolAssistant.Services.Mapping.csproj" />
   </ItemGroup>

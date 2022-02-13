@@ -17,7 +17,7 @@
                 throw new ArgumentNullException(nameof(source));
             }
 
-            return source.ProjectTo(AutoMapperConfig.MapperInstance.ConfigurationProvider, null, membersToExpand);
+            return source.ProjectTo(AutoMapperConfig.MapperInstance.ConfigurationProvider, membersToExpand);
         }
 
         public static IQueryable<TDestination> To<TDestination>(

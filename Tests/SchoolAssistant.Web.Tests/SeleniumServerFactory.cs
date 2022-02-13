@@ -19,14 +19,14 @@
             var host = WebHost.CreateDefaultBuilder(Array.Empty<string>()).UseStartup<TStartup>().Build();
             host.Start();
             this.RootUri = host.ServerFeatures.Get<IServerAddressesFeature>().Addresses.LastOrDefault();
-            var testServer = new TestServer(new WebHostBuilder().UseStartup<FakeStartup>());
+            _ = new TestServer(new WebHostBuilder().UseStartup<FakeStartup>());
         }
 
         public string RootUri { get; set; }
 
         public class FakeStartup
         {
-            public void ConfigureServices(IServiceCollection services)
+            public void ConfigureServices()
             {
             }
 
