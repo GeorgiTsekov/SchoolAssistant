@@ -41,18 +41,18 @@
         public void TestGetAll_WithTestedData_ShouldReturnCourseGetAll()
         {
             var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+                .UseInMemoryDatabase(Guid.NewGuid().ToString())
                 .Options;
 
             var context = new ApplicationDbContext(options);
             SeedTestData(context);
 
-            var coursesService = new CoursesService(context);
+            ICoursesService coursesService = new CoursesService(context);
 
             var expectedData = GetTestData();
-            var actualData = coursesService.GetAll<Course>(1, 12);
+            IEnumerable<CourseInListViewModel> actualData = coursesService.GetAll<CourseInListViewModel>(default, default);
 
-            Assert.True(expectedData == actualData, "CourseService CourseById() method does not work properly!");
+            Assert.True(expectedData == actualData, "CourseService CourseGetAll() method does not work properly!");
         }
 
         [Fact]
@@ -68,7 +68,7 @@
             var coursesService = new CoursesService(context);
 
             var expectedData = GetTestData().FirstOrDefault(x => x.Id == 2);
-            var actualDataCount = coursesService.GetById<Course>(2);
+            var actualDataCount = coursesService.GetById<SingleCourseViewModel>(2);
 
             Assert.True(expectedData.Name == actualDataCount.Name, "CourseService CourseById() method does not work properly!");
         }
@@ -113,6 +113,7 @@
                     Description = "2sdfdfg2 dfgdgssafjjk ljdakl sjkajd kasjd klasj kdjaldk jasld",
                     DepartmentId = 2,
                     Id = 2,
+                    CreatedByUserId = "Gisho123",
                 },
             };
         }
