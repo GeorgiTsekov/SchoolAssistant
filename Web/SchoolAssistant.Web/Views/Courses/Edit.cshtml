@@ -1,6 +1,6 @@
-﻿@model SchoolAssistant.Web.ViewModels.Courses.CreateCourseInputModel
+﻿@model SchoolAssistant.Web.ViewModels.Courses.EditCourseInputModel
 @{
-    this.ViewData["Title"] = "Add new Course";
+    this.ViewData["Title"] = "Edit Course";
     var departmentItems = this.Model.DepartmentsItems.Select(x => new SelectListItem(x.Value, x.Key));
 }
 
@@ -22,21 +22,8 @@
         <select asp-for="DepartmentId" class=" form-control" asp-items="departmentItems"></select>
         <span asp-validation-for="DepartmentId" class="text-danger"></span>
     </div>
-    <div id="LecturesContainer">
-        <label asp-for="Lectures"></label>
-        <a class="btn btn-success" onclick="AddMoreLectures()">+</a>
-    </div>
     <hr />
-    <input type="submit" class="btn btn-primary" value="Save changes" />
+    <input type="hidden" asp-for="Id" />
+    <input type="submit" class="btn btn-success" value="Save changes" />
 </form>
 
-@section Scripts {
-    <script>
-        var lectureIndex = 0;
-        function AddMoreLectures() {
-            $("#LecturesContainer").
-                append("<div class='form-control'>Name: <input type='text' name='Lectures[" + lectureIndex + "].Name' /> Url: <input type='text' name='Lectures[" + lectureIndex + "].VideoUrl' /> Presentations: <input type='file' name='Lectures[" + lectureIndex + "].Presentations' /></div>");
-            lectureIndex++;
-        }
-    </script>
-}

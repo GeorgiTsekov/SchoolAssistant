@@ -18,5 +18,7 @@
         T GetLectureById<T>(int id);
 
         IEnumerable<T> GetRandom<T>(int count);
+
+        Task UpdateAsync(int id, EditCourseInputModel input);
     }
 }

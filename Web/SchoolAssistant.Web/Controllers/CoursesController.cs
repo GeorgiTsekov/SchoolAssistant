@@ -7,6 +7,7 @@
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
+    using SchoolAssistant.Common;
     using SchoolAssistant.Data.Models;
     using SchoolAssistant.Services.Data;
     using SchoolAssistant.Web.ViewModels.Courses;
@@ -64,6 +65,30 @@
 
             // Redirect to course info page
             return this.Redirect("/");
+        }
+
+        [Authorize(Roles = GlobalConstants.AdministratorRoleName)]
+        public IActionResult Edit(int id)
+        {
+            var inputModel = this.coursesService.GetById<EditCourseInputModel>(id);
+            inputModel.Id = id;
+            inputModel.DepartmentsItems = this.departmentsService.GetAllAsKeyValuePairs();
+            return this.View(inputModel);
+        }
+
+        [Authorize(Roles = GlobalConstants.AdministratorRoleName)]
+        [HttpPost]
+        public async Task<IActionResult> Edit(int id, EditCourseInputModel input)
+        {
+            if (!this.ModelState.IsValid)
+            {
+                input.Id = id;
+                input.DepartmentsItems = this.departmentsService.GetAllAsKeyValuePairs();
+                return this.View(input);
+            }
+
+            await this.coursesService.UpdateAsync(id, input);
+            return this.RedirectToAction(nameof(this.ById), new { id });
         }
 
         public IActionResult All(int id = 1)

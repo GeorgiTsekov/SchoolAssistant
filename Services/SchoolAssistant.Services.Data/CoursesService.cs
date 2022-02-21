@@ -118,6 +118,15 @@
                 .ToList();
         }
 
+        public async Task UpdateAsync(int id, EditCourseInputModel input)
+        {
+            var course = this.applicationDbContext.Courses.FirstOrDefault(x => x.Id == id);
+            course.Name = input.Name;
+            course.Description = input.Description;
+            course.DepartmentId = input.DepartmentId;
+            await this.applicationDbContext.SaveChangesAsync();
+        }
+
         private static string MakeYoutubeVideoWorkForMyApp(string videoInput)
         {
             var sb = new StringBuilder();
