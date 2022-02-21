@@ -67,22 +67,30 @@
             return this.Redirect("/");
         }
 
-        [Authorize(Roles = GlobalConstants.AdministratorRoleName)]
+        [Authorize]
         public IActionResult Edit(int id)
         {
             var inputModel = this.coursesService.GetById<EditCourseInputModel>(id);
-            inputModel.Id = id;
-            inputModel.DepartmentsItems = this.departmentsService.GetAllAsKeyValuePairs();
-            return this.View(inputModel);
+
+            if (this.User.Identity.Name == inputModel.CreatedByUserUserName || this.User.IsInRole(GlobalConstants.AdministratorRoleName))
+            {
+                inputModel.Id = id;
+                inputModel.CreatedByUserUserName = this.User.Identity.Name;
+                inputModel.DepartmentsItems = this.departmentsService.GetAllAsKeyValuePairs();
+                return this.View(inputModel);
+            }
+
+            return this.RedirectToAction(nameof(this.ById), new { id });
         }
 
-        [Authorize(Roles = GlobalConstants.AdministratorRoleName)]
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Edit(int id, EditCourseInputModel input)
         {
             if (!this.ModelState.IsValid)
             {
                 input.Id = id;
+                input.CreatedByUserUserName = this.User.Identity.Name;
                 input.DepartmentsItems = this.departmentsService.GetAllAsKeyValuePairs();
                 return this.View(input);
             }

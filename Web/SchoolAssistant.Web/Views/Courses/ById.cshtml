@@ -20,7 +20,7 @@
         <li><span id="averageVoteValue">@Model.AverageVote.ToString("0.0")</span><span> / 10</span> </li>
     </ul>
 </li>
-@if (this.User.IsInRole(GlobalConstants.AdministratorRoleName))
+@if (this.User.Identity.Name == Model.CreatedByUserUserName || this.User.IsInRole(GlobalConstants.AdministratorRoleName))
 {
     <li class="single-meta">
         <a asp-controller="Courses" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>

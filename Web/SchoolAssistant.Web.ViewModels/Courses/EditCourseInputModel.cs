@@ -6,5 +6,7 @@
     public class EditCourseInputModel : BaseCourseInputModel, IMapFrom<Course>
     {
         public int Id { get; set; }
+
+        public string CreatedByUserUserName { get; set; }
     }
 }

@@ -4,7 +4,7 @@
     var departmentItems = this.Model.DepartmentsItems.Select(x => new SelectListItem(x.Value, x.Key));
 }
 
-<form method="post" class="col-md-10 offset-md-2" enctype="multipart/form-data">
+<form method="post" id="editForm" class="col-md-10 offset-md-2" enctype="multipart/form-data">
     <h1>@ViewData["Title"]</h1>
     <div asp-validation-summary="All"></div>
     <div class="form-group">
@@ -24,6 +24,25 @@
     </div>
     <hr />
     <input type="hidden" asp-for="Id" />
-    <input type="submit" class="btn btn-success" value="Save changes" />
 </form>
+
+<button type="submit" class="btn btn-success" data-toggle="modal" data-target="#modalEdit">Save changes</button>
+
+<div class="modal" id="modalEdit" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirm edit</h5>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Do you wont to save changes></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="editForm.submit()">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
 
