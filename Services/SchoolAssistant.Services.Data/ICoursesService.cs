@@ -16,5 +16,7 @@
         T GetById<T>(int id);
 
         T GetLectureById<T>(int id);
+
+        IEnumerable<T> GetRandom<T>(int count);
     }
 }

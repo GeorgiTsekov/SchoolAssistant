@@ -16,5 +16,7 @@
         Task<Department> GetById(int? id);
 
         Task<Department> GetByIdAndUpdate(int? id, Department department);
+
+        int GetCount();
     }
 }

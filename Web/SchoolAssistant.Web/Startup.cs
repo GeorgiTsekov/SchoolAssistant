@@ -65,7 +65,6 @@
             services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
             services.AddScoped<IDbQueryRunner, DbQueryRunner>();
 
-            services.AddTransient<IGetCountsService, GetCountsService>();
             services.AddTransient<IDepartmentsService, DepartmentsService>();
             services.AddTransient<ICoursesService, CoursesService>();
             services.AddTransient<IVotesService, VotesService>();

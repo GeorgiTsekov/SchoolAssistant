@@ -5,25 +5,32 @@
     using Microsoft.AspNetCore.Mvc;
     using SchoolAssistant.Services.Data;
     using SchoolAssistant.Web.ViewModels;
+    using SchoolAssistant.Web.ViewModels.Courses;
+    using SchoolAssistant.Web.ViewModels.Home;
 
     public class HomeController : BaseController
     {
-        private readonly IGetCountsService getCountsService;
+        private readonly IDepartmentsService departmentsService;
+        private readonly ICoursesService coursesService;
 
-        public HomeController(IGetCountsService getCountsService)
+        public HomeController(
+            IDepartmentsService departmentsService,
+            ICoursesService coursesService)
         {
-            this.getCountsService = getCountsService;
+            this.departmentsService = departmentsService;
+            this.coursesService = coursesService;
         }
 
         public IActionResult Index()
         {
-            var viewModel = this.getCountsService.GetCounts();
-            return this.View(viewModel);
-        }
+            var viewModel = new IndexViewModel
+            {
+                CoursesCount = this.coursesService.GetCount(),
+                DepartmentsCount = this.departmentsService.GetCount(),
+                RandomCourses = this.coursesService.GetRandom<CourseInListViewModel>(10),
+            };
 
-        public IActionResult Privacy()
-        {
-            return this.View();
+            return this.View(viewModel);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

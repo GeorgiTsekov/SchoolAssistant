@@ -109,6 +109,15 @@
             return this.applicationDbContext.Courses.Count();
         }
 
+        public IEnumerable<T> GetRandom<T>(int count)
+        {
+            return this.applicationDbContext.Courses
+                .OrderBy(x => Guid.NewGuid())
+                .Take(count)
+                .To<T>()
+                .ToList();
+        }
+
         private static string MakeYoutubeVideoWorkForMyApp(string videoInput)
         {
             var sb = new StringBuilder();

@@ -64,5 +64,10 @@
         {
             throw new NotImplementedException();
         }
+
+        public int GetCount()
+        {
+            return this.departmentRepository.All().Count();
+        }
     }
 }
