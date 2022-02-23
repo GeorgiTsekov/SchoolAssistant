@@ -11,6 +11,7 @@
     using SchoolAssistant.Data.Models;
     using SchoolAssistant.Services.Mapping;
     using SchoolAssistant.Web.ViewModels.Courses;
+    using SchoolAssistant.Web.ViewModels.Lectures;
 
     public class CoursesService : ICoursesService
     {
@@ -22,7 +23,7 @@
             this.applicationDbContext = applicationDbContext;
         }
 
-        public async Task CreateAsync(CreateCourseInputModel input, string userId, string presentationPath)
+        public async Task CreateAsync(CreateCourseInputModel input, string userId)
         {
             var course = new Course
             {
@@ -31,42 +32,6 @@
                 DepartmentId = input.DepartmentId,
                 CreatedByUserId = userId,
             };
-
-            foreach (var lectureInput in input.Lectures)
-            {
-                var videoInput = lectureInput.VideoUrl;
-                string youtubeVideo = MakeYoutubeVideoWorkForMyApp(videoInput);
-
-                var lecture = new Lecture
-                {
-                    Name = lectureInput.Name,
-                    VideoUrl = youtubeVideo.ToString().TrimEnd(),
-                };
-
-                Directory.CreateDirectory($"{presentationPath}/lectures/courses/");
-                foreach (var presentationInput in lectureInput.Presentations)
-                {
-                    var extension = Path.GetExtension(presentationInput.FileName).TrimStart('.');
-
-                    if (!this.allowedExtensions.Any(x => extension.EndsWith(x)))
-                    {
-                        throw new Exception($"Invalid image extension {extension}");
-                    }
-
-                    var dbPresentation = new Presentation
-                    {
-                        CreatedByUserId = userId,
-                        Extension = extension,
-                    };
-
-                    lecture.Presentations.Add(dbPresentation);
-                    var physicalPath = $"{presentationPath}/lectures/courses/{dbPresentation.Id}.{extension}";
-                    using Stream fileStream = new FileStream(physicalPath, FileMode.Create);
-                    await presentationInput.CopyToAsync(fileStream);
-                }
-
-                course.Lectures.Add(lecture);
-            }
 
             await this.applicationDbContext.Courses.AddAsync(course);
             await this.applicationDbContext.SaveChangesAsync();
@@ -125,6 +90,58 @@
             course.Description = input.Description;
             course.DepartmentId = input.DepartmentId;
             await this.applicationDbContext.SaveChangesAsync();
+        }
+
+        public async Task AddLectureAsync(int id, CreateLectureInputModel input, string presentationPath)
+        {
+            var course = this.applicationDbContext.Courses
+                .Where(x => x.Id == id)
+                .FirstOrDefault();
+
+            var videoInput = input.VideoUrl;
+            string youtubeVideo = MakeYoutubeVideoWorkForMyApp(videoInput);
+
+            var lecture = new Lecture
+            {
+                Name = input.LectureName,
+                VideoUrl = youtubeVideo.ToString().TrimEnd(),
+            };
+
+            Directory.CreateDirectory($"{presentationPath}/lectures/courses/");
+            foreach (var presentationInput in input.Presentations)
+            {
+                var extension = Path.GetExtension(presentationInput.FileName).TrimStart('.');
+
+                if (!this.allowedExtensions.Any(x => extension.EndsWith(x)))
+                {
+                    throw new Exception($"Invalid image extension {extension}");
+                }
+
+                var dbPresentation = new Presentation
+                {
+                    CreatedByUserId = input.CreatedByUserUserName,
+                    Extension = extension,
+                };
+
+                lecture.Presentations.Add(dbPresentation);
+                var physicalPath = $"{presentationPath}/lectures/courses/{dbPresentation.Id}.{extension}";
+                using Stream fileStream = new FileStream(physicalPath, FileMode.Create);
+                await presentationInput.CopyToAsync(fileStream);
+            }
+
+            course.Lectures.Add(lecture);
+            await this.applicationDbContext.SaveChangesAsync();
+        }
+
+        public IEnumerable<T> GetByLectures<T>(IEnumerable<int> lecturesIds)
+        {
+            var query = this.applicationDbContext.Courses.AsQueryable();
+            foreach (var lectureId in lecturesIds)
+            {
+                query = query.Where(x => x.Lectures.Any(l => l.Id == lectureId));
+            }
+
+            return query.To<T>().ToList();
         }
 
         private static string MakeYoutubeVideoWorkForMyApp(string videoInput)

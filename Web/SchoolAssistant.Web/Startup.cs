@@ -67,6 +67,7 @@
 
             services.AddTransient<IDepartmentsService, DepartmentsService>();
             services.AddTransient<ICoursesService, CoursesService>();
+            services.AddTransient<ILecturesService, LecturesService>();
             services.AddTransient<IVotesService, VotesService>();
 
             // Application services

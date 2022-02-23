@@ -11,6 +11,7 @@
     using SchoolAssistant.Data.Models;
     using SchoolAssistant.Services.Data;
     using SchoolAssistant.Web.ViewModels.Courses;
+    using SchoolAssistant.Web.ViewModels.Lectures;
 
     public class CoursesController : BaseController
     {
@@ -56,7 +57,7 @@
             var user = await this.userManager.GetUserAsync(this.User);
             try
             {
-                await this.coursesService.CreateAsync(input, user.Id, $"{this.environment.WebRootPath}/presentations");
+                await this.coursesService.CreateAsync(input, user.Id);
             }
             catch (Exception ex)
             {
@@ -96,6 +97,36 @@
             }
 
             await this.coursesService.UpdateAsync(id, input);
+            return this.RedirectToAction(nameof(this.ById), new { id });
+        }
+
+        [Authorize]
+        public IActionResult AddLecture(int id)
+        {
+            var inputModel = this.coursesService.GetById<CreateLectureInputModel>(id);
+
+            if (this.User.Identity.Name == inputModel.CreatedByUserUserName || this.User.IsInRole(GlobalConstants.AdministratorRoleName))
+            {
+                inputModel.Id = id;
+                inputModel.CreatedByUserUserName = this.User.Identity.Name;
+                return this.View(inputModel);
+            }
+
+            return this.RedirectToAction(nameof(this.ById), new { id });
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> AddLecture(int id, CreateLectureInputModel input)
+        {
+            if (!this.ModelState.IsValid)
+            {
+                input.Id = id;
+                input.CreatedByUserUserName = this.User.Identity.Name;
+                return this.View(input);
+            }
+
+            await this.coursesService.AddLectureAsync(id, input, $"{this.environment.WebRootPath}/presentations");
             return this.RedirectToAction(nameof(this.ById), new { id });
         }
 

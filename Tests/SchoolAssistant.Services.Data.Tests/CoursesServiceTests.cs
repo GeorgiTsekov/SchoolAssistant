@@ -14,7 +14,6 @@
     using SchoolAssistant.Data.Common.Repositories;
     using SchoolAssistant.Data.Models;
     using SchoolAssistant.Web.ViewModels.Courses;
-    using SchoolAssistant.Web.Views.Courses;
     using Xunit;
 
     public class CoursesServiceTests

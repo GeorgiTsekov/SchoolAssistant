@@ -7,6 +7,7 @@
     using AutoMapper;
     using SchoolAssistant.Data.Models;
     using SchoolAssistant.Services.Mapping;
+    using SchoolAssistant.Web.ViewModels.Lectures;
 
     public class SingleCourseViewModel : IMapFrom<Course>, IHaveCustomMappings
     {
