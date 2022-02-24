@@ -1,0 +1,16 @@
+﻿@model SchoolAssistant.Web.ViewModels.SearchCourses.LecturesNameViewModel
+@{
+    this.ViewData["Title"] = "Search By Lectures Name";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div>
+    <form asp-action="List" method="get" class="col-md-10 offset-md-2" enctype="multipart/form-data">
+        <div class="form-group">
+            <input type="search" name="Name" />
+        </div>
+        <button class="btn btn-primary">Search</button>
+    </form>
+
+</div>

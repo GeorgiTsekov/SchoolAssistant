@@ -133,15 +133,25 @@
             await this.applicationDbContext.SaveChangesAsync();
         }
 
-        public IEnumerable<T> GetByLectures<T>(IEnumerable<int> lecturesIds)
+        public IEnumerable<T> GetCoursesByLectureName<T>(string name)
         {
-            var query = this.applicationDbContext.Courses.AsQueryable();
-            foreach (var lectureId in lecturesIds)
+            var lectures = this.applicationDbContext.Lectures;
+            var result = this.applicationDbContext.Courses.AsQueryable();
+            var coursesIds = new List<int>();
+
+            foreach (var lecture in lectures)
             {
-                query = query.Where(x => x.Lectures.Any(l => l.Id == lectureId));
+                if (lecture.Name.Contains(name))
+                {
+                    if (!coursesIds.Contains(lecture.CourseId))
+                    {
+                        coursesIds.Add(lecture.CourseId);
+                    }
+                }
             }
 
-            return query.To<T>().ToList();
+            result = result.Where(x => coursesIds.Any(c => c == x.Id));
+            return result.AsQueryable().To<T>().ToList();
         }
 
         private static string MakeYoutubeVideoWorkForMyApp(string videoInput)

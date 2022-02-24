@@ -24,6 +24,6 @@
 
         Task AddLectureAsync(int id, CreateLectureInputModel input, string presentationPath);
 
-        IEnumerable<T> GetByLectures<T>(IEnumerable<int> lecturesIds);
+        IEnumerable<T> GetCoursesByLectureName<T>(string name);
     }
 }

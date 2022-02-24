@@ -1,0 +1,22 @@
+﻿@model SchoolAssistant.Web.ViewModels.SearchCourses.ListViewModel
+@{
+    this.ViewData["Title"] = "Searched Courses";
+}
+
+<h1>@this.ViewData["Title"]</h1>
+<hr />
+<div class="row">
+    @foreach (var course in this.Model.Courses)
+    {
+        <div class="card col-md-3" style="width: 18rem;">
+            <div class="card-body">
+                <h5 class="card-title">Course: @course.Name</h5>
+                <h6 class="card-subtitle mb-2 text-muted">Department: @course.DepartmentName</h6>
+                <h6 class="card-subtitle mb-2 text-muted">Created By: @course.CreatedByUserUserName</h6>
+                <p class="card-text">@course.Description</p>
+                <a asp-controller="Courses" asp-action="ById" asp-route-id="@course.Id" class="card-link">Card link</a>
+            </div>
+        </div>
+    }
+</div>
+
