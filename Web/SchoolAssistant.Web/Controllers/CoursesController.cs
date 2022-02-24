@@ -155,5 +155,13 @@
             var lecture = this.coursesService.GetLectureById<SingleLectureViewModel>(id);
             return this.View(lecture);
         }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> Delete(int id)
+        {
+            await this.coursesService.DeleteAsync(id);
+            return this.RedirectToAction(nameof(this.All));
+        }
     }
 }

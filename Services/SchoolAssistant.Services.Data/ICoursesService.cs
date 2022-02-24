@@ -25,5 +25,7 @@
         Task AddLectureAsync(int id, CreateLectureInputModel input, string presentationPath);
 
         IEnumerable<T> GetCoursesByLectureName<T>(string name);
+
+        Task DeleteAsync(int id);
     }
 }
