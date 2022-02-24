@@ -142,6 +142,12 @@
         {
             var lectures = this.lecturesRepository.All();
             var result = this.coursesRepository.All().AsQueryable();
+
+            if (name == null)
+            {
+                return result.AsQueryable().To<T>().ToList();
+            }
+
             var coursesIds = new List<int>();
 
             foreach (var lecture in lectures)
