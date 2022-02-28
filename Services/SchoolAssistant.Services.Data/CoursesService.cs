@@ -44,7 +44,7 @@
 
         public IEnumerable<T> GetAll<T>(int page, int itemsPerPage = 12)
         {
-            var courses = this.coursesRepository.All()
+            var courses = this.coursesRepository.AllAsNoTracking()
                 .OrderByDescending(x => x.Id)
                 .Skip((page - 1) * itemsPerPage)
                 .Take(itemsPerPage)
@@ -56,7 +56,7 @@
 
         public T GetById<T>(int id)
         {
-            var course = this.coursesRepository.All()
+            var course = this.coursesRepository.AllAsNoTracking()
                 .Where(x => x.Id == id)
                 .To<T>()
                 .FirstOrDefault();
@@ -66,7 +66,7 @@
 
         public T GetLectureById<T>(int id)
         {
-            var lecture = this.lecturesRepository.All()
+            var lecture = this.lecturesRepository.AllAsNoTracking()
                 .Where(x => x.Id == id)
                 .To<T>()
                 .FirstOrDefault();
@@ -76,12 +76,12 @@
 
         public int GetCount()
         {
-            return this.coursesRepository.All().Count();
+            return this.coursesRepository.AllAsNoTracking().Count();
         }
 
         public IEnumerable<T> GetRandom<T>(int count)
         {
-            return this.coursesRepository.All()
+            return this.coursesRepository.AllAsNoTracking()
                 .OrderBy(x => Guid.NewGuid())
                 .Take(count)
                 .To<T>()
@@ -90,7 +90,7 @@
 
         public async Task UpdateAsync(int id, EditCourseInputModel input)
         {
-            var course = this.coursesRepository.All().FirstOrDefault(x => x.Id == id);
+            var course = this.coursesRepository.AllAsNoTracking().FirstOrDefault(x => x.Id == id);
             course.Name = input.Name;
             course.Description = input.Description;
             course.DepartmentId = input.DepartmentId;
@@ -99,7 +99,7 @@
 
         public async Task AddLectureAsync(int id, CreateLectureInputModel input, string presentationPath)
         {
-            var course = this.coursesRepository.All()
+            var course = this.coursesRepository.AllAsNoTracking()
                 .Where(x => x.Id == id)
                 .FirstOrDefault();
 
@@ -140,8 +140,8 @@
 
         public IEnumerable<T> GetCoursesByLectureName<T>(string name)
         {
-            var lectures = this.lecturesRepository.All();
-            var result = this.coursesRepository.All().AsQueryable();
+            var lectures = this.lecturesRepository.AllAsNoTracking();
+            var result = this.coursesRepository.AllAsNoTracking().AsQueryable();
 
             if (name == null)
             {
@@ -167,7 +167,7 @@
 
         public async Task DeleteAsync(int id)
         {
-            var course = this.coursesRepository.All().FirstOrDefault(x => x.Id == id);
+            var course = this.coursesRepository.AllAsNoTracking().FirstOrDefault(x => x.Id == id);
             this.coursesRepository.Delete(course);
             await this.coursesRepository.SaveChangesAsync();
         }

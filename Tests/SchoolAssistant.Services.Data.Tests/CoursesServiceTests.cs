@@ -1,262 +1,176 @@
-﻿////namespace SchoolAssistant.Services.Data.Tests
-////{
-////    using System;
-////    using System.Collections.Generic;
-////    using System.IO;
-////    using System.Linq;
-////    using System.Threading.Tasks;
+﻿namespace SchoolAssistant.Services.Data.Tests
+{
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Reflection;
+    using System.Threading.Tasks;
 
-////    using Microsoft.AspNetCore.Http;
-////    using Microsoft.AspNetCore.Http.Internal;
-////    using Microsoft.EntityFrameworkCore;
-////    using Moq;
-////    using SchoolAssistant.Data;
-////    using SchoolAssistant.Data.Common.Repositories;
-////    using SchoolAssistant.Data.Models;
-////    using SchoolAssistant.Web.ViewModels.Courses;
-////    using Xunit;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Http.Internal;
+    using Microsoft.EntityFrameworkCore;
+    using Moq;
+    using SchoolAssistant.Data;
+    using SchoolAssistant.Data.Common.Repositories;
+    using SchoolAssistant.Data.Models;
+    using SchoolAssistant.Services.Mapping;
+    using SchoolAssistant.Web.ViewModels;
+    using SchoolAssistant.Web.ViewModels.Courses;
+    using SchoolAssistant.Web.ViewModels.Lectures;
+    using Xunit;
 
-////    public class CoursesServiceTests
-////    {
-////        [Fact]
-////        public void TestGetCount_WithTestedData_ShouldReturnCountOfCourses()
-////        {
-////            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-////                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-////                .Options;
+    public class CoursesServiceTests
+    {
+        public CoursesServiceTests()
+        {
+            AutoMapperConfig.RegisterMappings(typeof(ErrorViewModel).GetTypeInfo().Assembly);
+        }
 
-////            var context = new ApplicationDbContext(options);
-////            SeedTestData(context);
+        [Fact]
+        public void TestGetById_WithTestedData_ShouldReturnCourseById()
+        {
+            var mockCourseRepo = new Mock<IDeletableEntityRepository<Course>>();
+            var mockLectureRepo = new Mock<IDeletableEntityRepository<Lecture>>();
+            mockCourseRepo.Setup(x => x.AllAsNoTracking()).Returns(GetTestCourseData().AsQueryable());
+            var lectures = new List<Lecture>();
+            mockLectureRepo.Setup(x => x.AllAsNoTracking()).Returns(lectures.AsQueryable());
+            var coursesService = new CoursesService(mockCourseRepo.Object, mockLectureRepo.Object);
+            var currentCourses = coursesService.GetById<SingleCourseViewModel>(11);
+            Assert.Equal("Pesho", currentCourses.Name);
+        }
 
-////            var coursesService = new CoursesService(context);
+        [Fact]
+        public void TestGetCountCourses_WithoutAnyData_ShouldReturnZero()
+        {
+            var mockCourseRepo = new Mock<IDeletableEntityRepository<Course>>();
+            var mockLectureRepo = new Mock<IDeletableEntityRepository<Lecture>>();
+            var courses = new List<Course>();
+            mockCourseRepo.Setup(x => x.AllAsNoTracking()).Returns(courses.AsQueryable());
+            var lectures = new List<Lecture>();
+            mockLectureRepo.Setup(x => x.AllAsNoTracking()).Returns(lectures.AsQueryable());
+            var coursesService = new CoursesService(mockCourseRepo.Object, mockLectureRepo.Object);
+            var allCourses = coursesService.GetAll<CourseInListViewModel>(1, 12);
+            Assert.Empty(allCourses);
+        }
 
-////            var expectedData = GetTestData();
-////            var actualDataCount = coursesService.GetCount();
+        [Fact]
+        public void TestGetAll_WithTestedData_ShouldReturnCourseGetAll()
+        {
+            var mockCourseRepo = new Mock<IDeletableEntityRepository<Course>>();
+            var mockLectureRepo = new Mock<IDeletableEntityRepository<Lecture>>();
+            mockCourseRepo.Setup(x => x.AllAsNoTracking()).Returns(GetTestCourseData().AsQueryable());
+            var lectures = new List<Lecture>();
+            mockLectureRepo.Setup(x => x.AllAsNoTracking()).Returns(lectures.AsQueryable());
+            var coursesService = new CoursesService(mockCourseRepo.Object, mockLectureRepo.Object);
+            var allCourses = coursesService.GetAll<CourseInListViewModel>(1, 12);
+            Assert.Equal(2, allCourses.Count());
+        }
 
-////            Assert.True(expectedData.Count == actualDataCount, "CourseService GetCount() method does not work properly!");
-////        }
+        [Fact]
+        public async void TestCreateAsync_WithTestedData_ShouldWorkCorrectly()
+        {
+            var courses = new List<Course>();
+            CreateCoursesServiceTest(courses, out Mock<IDeletableEntityRepository<Course>> mockCoursesRepo, out CoursesService service, out CreateCourseInputModel courseInputModel);
 
-////        [Fact]
-////        public void TestGetAll_WithTestedData_ShouldReturnCourseGetAll()
-////        {
-////            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-////                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-////                .Options;
+            await service.CreateAsync(courseInputModel, Guid.NewGuid().ToString());
+            await service.CreateAsync(courseInputModel, Guid.NewGuid().ToString());
+            await service.CreateAsync(courseInputModel, Guid.NewGuid().ToString());
 
-////            var context = new ApplicationDbContext(options);
-////            SeedTestData(context);
+            Assert.Equal(3, service.GetCount());
 
-////            ICoursesService coursesService = new CoursesService(context);
+            await service.CreateAsync(courseInputModel, Guid.NewGuid().ToString());
 
-////            var expectedData = GetTestData();
-////            IEnumerable<CourseInListViewModel> actualData = coursesService.GetAll<CourseInListViewModel>(default, default);
+            mockCoursesRepo.Verify(x => x.AddAsync(It.IsAny<Course>()), Times.Exactly(4));
+            Assert.Equal(4, service.GetCount());
+        }
 
-////            Assert.True(expectedData == actualData, "CourseService CourseGetAll() method does not work properly!");
-////        }
+        private static List<Course> GetTestCourseData()
+        {
+            return new List<Course>
+            {
+                new Course
+                {
+                    Name = "Pesho",
+                    CreatedByUser = new ApplicationUser
+                    {
+                        UserName = "Pesho1",
+                        Id = "Tosho123",
+                    },
+                    Description = "1asdjlask ljdakl sjkajd kasjd klasj kdjaldk jasld",
+                    Department = new Department
+                    {
+                        Id = 1,
+                        Name = "asdasd",
+                    },
+                    Id = 11,
+                },
+                new Course
+                {
+                    Name = "Gosho",
+                    CreatedByUser = new ApplicationUser
+                    {
+                        UserName = "Pesho1",
+                        Id = "Gisho123",
+                    },
+                    Description = "2sdfdfg2 dfgdgssafjjk ljdakl sjkajd kasjd klasj kdjaldk jasld",
+                    Department = new Department
+                    {
+                        Id = 2,
+                        Name = "Bsdasd",
+                    },
+                    Id = 12,
+                },
+            };
+        }
 
-////        [Fact]
-////        public void TestGetById_WithTestedData_ShouldReturnCourseById()
-////        {
-////            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-////                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-////                .Options;
+        private static void CreateCoursesServiceTest(List<Course> courses, out Mock<IDeletableEntityRepository<Course>> mockCoursesRepo, out CoursesService service, out CreateCourseInputModel courseInputModel)
+        {
+            mockCoursesRepo = new Mock<IDeletableEntityRepository<Course>>();
+            mockCoursesRepo.Setup(x => x.AllAsNoTracking()).Returns(courses.AsQueryable());
+            mockCoursesRepo.Setup(x => x.AddAsync(It.IsAny<Course>())).Callback((Course course) => courses.Add(course));
 
-////            var context = new ApplicationDbContext(options);
-////            SeedTestData(context);
+            var lectures = new List<Lecture>();
+            var mockLecturesRepo = new Mock<IDeletableEntityRepository<Lecture>>();
+            mockLecturesRepo.Setup(x => x.AllAsNoTracking()).Returns(lectures.AsQueryable());
+            mockLecturesRepo.Setup(x => x.AddAsync(It.IsAny<Lecture>())).Callback((Lecture lecture) => lectures.Add(lecture));
 
-////            var coursesService = new CoursesService(context);
+            service = new CoursesService(mockCoursesRepo.Object, mockLecturesRepo.Object);
+            courseInputModel = CourseInputModel();
+        }
 
-////            var expectedData = GetTestData().FirstOrDefault(x => x.Id == 2);
-////            var actualDataCount = coursesService.GetById<SingleCourseViewModel>(2);
+        private static CreateCourseInputModel CourseInputModel()
+        {
+            var content = "Hello World from a Fake File";
+            var fileName = "test.pdf";
+            var stream = new MemoryStream();
+            var writer = new StreamWriter(stream);
+            writer.Write(content);
+            writer.Flush();
+            stream.Position = 0;
+            IFormFile presentation = new FormFile(stream, 0, stream.Length, "id_from_form", fileName);
+            var presentations = new List<IFormFile>
+            {
+                presentation,
+            };
+            var lectureInputModel = new CourseLectureInputModel
+            {
+                LectureName = Guid.NewGuid().ToString(),
+                VideoUrl = "https://www.youtube.com/watch?v=oneJK8gyUGc&t=6s",
+                Presentations = presentations,
+            };
+            var lecturesInputModel = new List<CourseLectureInputModel>
+            {
+                lectureInputModel,
+            };
 
-////            Assert.True(expectedData.Name == actualDataCount.Name, "CourseService CourseById() method does not work properly!");
-////        }
-
-////        [Fact]
-////        public void TestGetCountCourses_WithoutAnyData_ShouldReturnZero()
-////        {
-////            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-////                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-////                .Options;
-
-////            var context = new ApplicationDbContext(options);
-
-////            var coursesService = new CoursesService(context);
-
-////            var actualDataCount = coursesService.GetCount();
-
-////            Assert.True(actualDataCount == 0, "CourseService GetCount() method does not work properly!");
-////        }
-
-////        private static void SeedTestData(ApplicationDbContext context)
-////        {
-////            context.Courses.AddRange(GetTestData());
-////            context.SaveChanges();
-////        }
-
-////        private static List<Course> GetTestData()
-////        {
-////            return new List<Course>
-////            {
-////                new Course
-////                {
-////                    Name = "Pesho",
-////                    Description = "1asdjlask ljdakl sjkajd kasjd klasj kdjaldk jasld",
-////                    DepartmentId = 1,
-////                    Id = 1,
-////                    CreatedByUserId = "Tosho123",
-////                },
-////                new Course
-////                {
-////                    Name = "Gosho",
-////                    Description = "2sdfdfg2 dfgdgssafjjk ljdakl sjkajd kasjd klasj kdjaldk jasld",
-////                    DepartmentId = 2,
-////                    Id = 2,
-////                    CreatedByUserId = "Gisho123",
-////                },
-////            };
-////        }
-
-////        ////[Fact]
-////        ////public async Task CreateAsyncShoutWorksCorrectly()
-////        ////{
-////        ////    var courses = new List<Course>();
-////        ////    CreateCoursesServiceTest(courses, out Mock<IDeletableEntityRepository<Course>> mockCoursesRepo, out CoursesService service, out CreateCourseInputModel courseInputModel);
-
-////        ////    await service.CreateAsync(courseInputModel, Guid.NewGuid().ToString(), "../presentations/lectures/courses/");
-////        ////    await service.CreateAsync(courseInputModel, Guid.NewGuid().ToString(), "../presentations/lectures/courses/");
-////        ////    await service.CreateAsync(courseInputModel, Guid.NewGuid().ToString(), "../presentations/lectures/courses/");
-
-////        ////    Assert.Equal(3, service.GetCount());
-
-////        ////    await service.CreateAsync(courseInputModel, Guid.NewGuid().ToString(), "../presentations/lectures/courses/");
-
-////        ////    mockCoursesRepo.Verify(x => x.AddAsync(It.IsAny<Course>()), Times.Exactly(4));
-////        ////    Assert.Equal(4, service.GetCount());
-
-////        ////    ////foreach (var course in service.GetAll<Course>(1, 12))
-////        ////    ////{
-////        ////    ////    Assert.True(courses.Any(c => c.Name == course.Name), "CoursesService GetAll() method bla bla bla");
-////        ////    ////}
-////        ////}
-
-////        ////[Fact]
-////        ////public async Task GetByIdShouldWorksCorrectly()
-////        ////{
-////        ////    var courses = new List<Course>();
-////        ////    CreateCoursesServiceTest(courses, out Mock<IDeletableEntityRepository<Course>> mockCoursesRepo, out CoursesService service, out CreateCourseInputModel courseInputModel);
-
-////        ////    await service.CreateAsync(courseInputModel, Guid.NewGuid().ToString(), "../presentations/lectures/courses/");
-
-////        ////    var course = courses.FirstOrDefault(x => x.Name == "Pesho");
-////        ////    service.GetById<Course>(course.Id).Name.Equals("Pesho");
-////        ////    var currentCourse = service.GetById<Course>(course.Id);
-////        ////    Assert.Equal("Pesho", currentCourse.Name);
-////        ////}
-
-////        ////[Fact]
-////        ////public async Task GetAllShouldWorksCorrectly()
-////        ////{
-////        ////    var courses = new List<Course>();
-////        ////    var mockCoursesRepo = new Mock<IDeletableEntityRepository<Course>>();
-////        ////    mockCoursesRepo.Setup(x => x.All()).Returns(courses.AsQueryable());
-////        ////    mockCoursesRepo.Setup(x => x.AddAsync(It.IsAny<Course>())).Callback((Course course) => courses.Add(course));
-////        ////    mockCoursesRepo.Setup(x => x.All()).Returns(courses.AsQueryable());
-
-////        ////    var lectures = new List<Lecture>();
-////        ////    var mockLecturesRepo = new Mock<IDeletableEntityRepository<Lecture>>();
-////        ////    mockLecturesRepo.Setup(x => x.All()).Returns(lectures.AsQueryable());
-////        ////    mockLecturesRepo.Setup(x => x.AddAsync(It.IsAny<Lecture>())).Callback((Lecture lecture) => lectures.Add(lecture));
-////        ////    mockLecturesRepo.Setup(x => x.All()).Returns(lectures.AsQueryable());
-
-////        ////    var service = new CoursesService(mockCoursesRepo.Object, mockLecturesRepo.Object);
-
-////        ////    var content = "Hello World from a Fake File";
-////        ////    var fileName = "test.pdf";
-////        ////    var stream = new MemoryStream();
-////        ////    var writer = new StreamWriter(stream);
-////        ////    writer.Write(content);
-////        ////    writer.Flush();
-////        ////    stream.Position = 0;
-////        ////    IFormFile presentation = new FormFile(stream, 0, stream.Length, "id_from_form", fileName);
-////        ////    var presentations = new List<IFormFile>
-////        ////    {
-////        ////        presentation,
-////        ////    };
-////        ////    var lectureInputModel = new CourseLectureInputModel
-////        ////    {
-////        ////        Name = Guid.NewGuid().ToString(),
-////        ////        VideoUrl = "https://www.youtube.com/watch?v=oneJK8gyUGc&t=6s",
-////        ////        Presentations = presentations,
-////        ////    };
-////        ////    var lecturesInputModel = new List<CourseLectureInputModel>
-////        ////    {
-////        ////        lectureInputModel,
-////        ////    };
-
-////        ////    var courseInputModel = new CreateCourseInputModel
-////        ////    {
-////        ////        Name = "Pesho",
-////        ////        DepartmentId = 1,
-////        ////        Description = "asdasd;lsd jls fklsd fjsklfj sdkl fjsdkl fjsdkj fsdklfj klsd fjsd",
-////        ////        Lectures = lecturesInputModel,
-////        ////    };
-
-////        ////    await service.CreateAsync(courseInputModel, Guid.NewGuid().ToString(), "../presentations/lectures/courses/");
-////        ////    await service.CreateAsync(courseInputModel, Guid.NewGuid().ToString(), "../presentations/lectures/courses/");
-////        ////    await service.CreateAsync(courseInputModel, Guid.NewGuid().ToString(), "../presentations/lectures/courses/");
-////        ////    var asd = service.GetCount();
-////        ////    var dsa = service.GetAll<Course>(1, 12).Count();
-////        ////}
-
-////        ////private static void CreateCoursesServiceTest(List<Course> courses, out Mock<IDeletableEntityRepository<Course>> mockCoursesRepo, out CoursesService service, out CreateCourseInputModel courseInputModel)
-////        ////{
-////        ////    mockCoursesRepo = new Mock<IDeletableEntityRepository<Course>>();
-////        ////    mockCoursesRepo.Setup(x => x.All()).Returns(courses.AsQueryable());
-////        ////    mockCoursesRepo.Setup(x => x.AddAsync(It.IsAny<Course>())).Callback((Course course) => courses.Add(course));
-
-////        ////    var lectures = new List<Lecture>();
-////        ////    var mockLecturesRepo = new Mock<IDeletableEntityRepository<Lecture>>();
-////        ////    mockLecturesRepo.Setup(x => x.All()).Returns(lectures.AsQueryable());
-////        ////    mockLecturesRepo.Setup(x => x.AddAsync(It.IsAny<Lecture>())).Callback((Lecture lecture) => lectures.Add(lecture));
-
-////        ////    service = new CoursesService(mockCoursesRepo.Object, mockLecturesRepo.Object);
-////        ////    courseInputModel = CourseInputModel();
-////        ////}
-
-////        ////private static CreateCourseInputModel CourseInputModel()
-////        ////{
-////        ////    var content = "Hello World from a Fake File";
-////        ////    var fileName = "test.pdf";
-////        ////    var stream = new MemoryStream();
-////        ////    var writer = new StreamWriter(stream);
-////        ////    writer.Write(content);
-////        ////    writer.Flush();
-////        ////    stream.Position = 0;
-////        ////    IFormFile presentation = new FormFile(stream, 0, stream.Length, "id_from_form", fileName);
-////        ////    var presentations = new List<IFormFile>
-////        ////    {
-////        ////        presentation,
-////        ////    };
-////        ////    var lectureInputModel = new CourseLectureInputModel
-////        ////    {
-////        ////        Name = Guid.NewGuid().ToString(),
-////        ////        VideoUrl = "https://www.youtube.com/watch?v=oneJK8gyUGc&t=6s",
-////        ////        Presentations = presentations,
-////        ////    };
-////        ////    var lecturesInputModel = new List<CourseLectureInputModel>
-////        ////    {
-////        ////        lectureInputModel,
-////        ////    };
-
-////        ////    var courseInputModel = new CreateCourseInputModel
-////        ////    {
-////        ////        Name = "Pesho",
-////        ////        DepartmentId = 1,
-////        ////        Description = "asdasd;lsd jls fklsd fjsklfj sdkl fjsdkl fjsdkj fsdklfj klsd fjsd",
-////        ////        Lectures = lecturesInputModel,
-////        ////    };
-////        ////    return courseInputModel;
-////        ////}
-////    }
-////}
+            var courseInputModel = new CreateCourseInputModel
+            {
+                Name = "Pesho",
+                DepartmentId = 1,
+                Description = "asdasd;lsd jls fklsd fjsklfj sdkl fjsdkl fjsdkj fsdklfj klsd fjsd",
+            };
+            return courseInputModel;
+        }
+    }
+}
